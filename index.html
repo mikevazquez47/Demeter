@@ -1,107 +1,2954 @@
 <!doctype html>
 <html lang="es">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#24142f">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
+<meta
+  name="theme-color"
+  content="#24142f"
+>
+
 <title>Demeter Finance · Mike</title>
+
 <style>
-:root{--bg:#f7f4f8;--card:#fff;--ink:#29232d;--muted:#817786;--line:#ece5ef;--purple:#5a356f;--pink:#ef5b9b;--pink2:#f6a4c6;--green:#2e9b68;--orange:#e58b35;--red:#d94c62;--shadow:0 10px 30px rgba(52,31,64,.08)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.top{background:linear-gradient(145deg,#271536,#5a356f);color:#fff;padding:24px 18px 18px;border-radius:0 0 28px 28px}.topline{display:flex;justify-content:space-between;align-items:center}.brand{font-size:12px;letter-spacing:.14em;font-weight:800;opacity:.8}.date{font-size:12px;background:#ffffff18;padding:8px 11px;border-radius:20px}h1{font-size:28px;line-height:1.05;margin:7px 0 5px}.sub{font-size:13px;color:#ddd0e3}main{max-width:980px;margin:auto;padding:14px 14px 92px}.segment{display:flex;background:#eadfeb;padding:4px;border-radius:15px;margin-bottom:14px}.segment button{flex:1;border:0;background:transparent;color:#6d5d74;padding:10px;border-radius:12px;font-weight:700}.segment button.active{background:var(--pink);color:white}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow)}.wide{grid-column:1/-1}.kicker{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}.big{font-size:28px;font-weight:850;margin-top:5px}.muted{color:var(--muted);font-size:12px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--orange)}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.progress{height:11px;background:#eee8f0;border-radius:20px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:20px}.alert{background:#fff5e9;border-color:#f3d4a8}.pill{display:inline-block;padding:5px 8px;border-radius:10px;background:#f3edf5;color:#674e70;font-size:11px;font-weight:800}.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;z-index:5;padding:8px max(8px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 25px rgba(30,15,40,.08)}.tabs button{flex:1;max-width:180px;border:0;background:transparent;color:#827584;font-size:11px;font-weight:700;padding:5px}.tabs button.active{color:var(--pink)}.ico{font-size:20px;display:block;margin-bottom:2px}.view{display:none}.view.active{display:block}form{display:grid;gap:9px}label{font-size:12px;color:var(--muted);font-weight:700}input,select{width:100%;border:1px solid #ddd3e2;border-radius:12px;padding:12px;background:#fff;color:var(--ink)}.primary{border:0;background:var(--purple);color:#fff;border-radius:12px;padding:13px;font-weight:800}.secondary{border:0;background:#f0e8f3;color:var(--purple);border-radius:12px;padding:11px;font-weight:800}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.goal{margin:12px 0}.goalhead{display:flex;justify-content:space-between;font-size:13px;font-weight:800;margin-bottom:6px}.tx{font-size:13px}.empty{padding:18px 0;text-align:center;color:var(--muted)}.note{font-size:12px;line-height:1.45;color:var(--muted)}@media(min-width:720px){.grid{grid-template-columns:repeat(4,1fr)}.wide{grid-column:1/-1}.card.span2{grid-column:span 2}}
-</style>
-</head>
-<body>
-<header class="top"><div class="topline"><div class="brand">DEMETER FITNESS · FINANZAS</div><div class="date" id="today"></div></div><h1>Tu jardín de metas</h1><div class="sub">Decisiones con el panorama completo, no con una sola cuenta.</div></header>
-<main>
-<div class="segment"><button class="active" onclick="setMode('personal',this)">Personal</button><button onclick="setMode('studio',this)">Estudio</button></div>
-<section id="dashboard" class="view active"><div class="grid">
-<div class="card"><div class="kicker">Liquidez confirmada</div><div id="liq" class="big"></div><div class="muted">Efectivo + débitos</div></div>
-<div class="card"><div class="kicker">Ingreso pendiente</div><div id="pending" class="big good"></div><div class="muted">Último pago de paquetes</div></div>
-<div class="card"><div class="kicker">Rentas próximas</div><div class="big bad">$18,000</div><div class="muted">1 y 5 de septiembre</div></div>
-<div class="card"><div class="kicker">Brecha proyectada</div><div id="gap" class="big bad"></div><div class="muted">Después del cobro pendiente</div></div>
-<div class="card wide alert"><div class="kicker">🚦 Decisión actual</div><h2 id="decision" style="margin:6px 0">Prioridad: fondear septiembre</h2><div id="decisionText" class="note"></div></div>
-<div class="card wide"><div class="kicker">📅 Calendario financiero</div><div class="row"><span><b>29 ago</b><br><span class="muted">Último pago de paquetes</span></span><b class="good">$2,454</b></div><div class="row"><span><b>1 sep</b><br><span class="muted">Renta Demeter</span></span><b class="bad">$11,500</b></div><div class="row"><span><b>5 sep</b><br><span class="muted">Renta casa</span></span><b class="bad">$6,500</b></div><div class="row"><span><b>20 sep</b><br><span class="muted">Inicio tanda · propuesta 2 números</span></span><b>$2,000/sem.</b></div><div class="row"><span><b>nov 2029</b><br><span class="muted">Ingreso extraordinario confirmado</span></span><b class="good">$325,000</b></div></div>
-<div class="card span2"><div class="kicker">💧 Cuentas</div><div id="accounts"></div></div><div class="card span2"><div class="kicker">💳 Deudas</div><div class="row"><span>Mercado Pago crédito</span><b>$22,400*</b></div><div class="row"><span>DiDi crédito</span><b>$40,000*</b></div><div class="row"><span>Nu crédito</span><b>$1,100</b></div><div class="muted">*Saldos registrados previamente; confirmar antes de abonos.</div></div>
-<div class="card wide"><div class="kicker">🎯 Meta: casa cubierta por inversiones</div><div class="goal"><div class="goalhead"><span>Capital objetivo</span><span>$1,456,267</span></div><div class="progress"><div id="goalBar" class="fill"></div></div><div class="muted" id="goalPct"></div></div><div class="row"><span>Capital invertido actual</span><b>$200,000</b></div><div class="row"><span>Escenario base</span><b>9% anual</b></div><div class="note">Objetivo calculado para cubrir ~$10,922 mensuales de gastos base de casa. El 9% es un supuesto de planificación, no un rendimiento garantizado.</div></div>
-<div class="card wide"><div class="kicker">🏆 Meta 2029</div><div class="goal"><div class="goalhead"><span>Objetivo mínimo</span><span>≥ 50%</span></div><div class="progress"><div id="goal2029" class="fill"></div></div><div class="muted">Los $325,000 de noviembre de 2029 son un ingreso futuro, no liquidez actual.</div></div></div>
-<div class="card wide"><div class="kicker">⚠️ Capital por conciliar</div><div class="row"><span>Venta de computadora</span><b>$20,000</b></div><div class="note">Registrado como venta de activo. No lo sumo a la liquidez hasta saber dónde quedó, para evitar contar el mismo dinero dos veces.</div></div>
-</div></section>
-<section id="registrar" class="view"><div class="card"><div class="kicker">➕ Registro rápido</div><h2>¿Qué pasó?</h2><form id="form"><label>Monto<input id="amount" type="number" min="0" step=".01" placeholder="Ej. 500" required></label><label>Tipo<select id="type"><option value="income">Ingreso</option><option value="expense">Gasto</option></select></label><label>Cuenta<select id="account"><option>Efectivo</option><option>Bancomer débito</option><option>Mercado Pago débito</option><option>Mercado Pago crédito</option><option>DiDi crédito</option><option>Nu crédito</option></select></label><label>Concepto<input id="concept" placeholder="Ej. clase privada, súper, renta..."></label><button class="primary">Guardar movimiento</button></form></div><div class="card" style="margin-top:11px"><div class="kicker">🧾 Historial</div><div id="history"></div></div></section>
-<section id="finanzas" class="view"><div class="grid"><div class="card wide"><div class="kicker">Mapa de decisión</div><div class="row"><span>1 · Obligaciones próximas</span><b>Primero</b></div><div class="row"><span>2 · Liquidez mínima</span><b>Proteger</b></div><div class="row"><span>3 · Deuda cara</span><b>Klar / confirmar saldo</b></div><div class="row"><span>4 · Inversión</span><b>Después</b></div><div class="row"><span>5 · Coche</span><b>Última prioridad</b></div></div><div class="card wide"><div class="kicker">Reglas del sistema</div><div class="note">Cada ingreso debe evaluarse contra saldos, ingresos pendientes, próximos vencimientos, deuda, liquidez mínima y metas. Una transferencia entre cuentas no es ingreso. Una venta de activo se registra aparte. Una deuda de crédito nunca se confunde con el saldo de débito.</div></div></div></section>
-<section id="metas" class="view"><div class="grid"><div class="card wide"><div class="kicker">🌱 Metas activas</div><div class="goal"><div class="goalhead"><span>Salir de deudas</span><span>Prioridad 1</span></div><div class="progress"><div class="fill" style="width:15%"></div></div></div><div class="goal"><div class="goalhead"><span>Casa pagada por inversiones</span><span>$200k / $1.456M</span></div><div class="progress"><div id="goalBar2" class="fill"></div></div></div><div class="goal"><div class="goalhead"><span>Capital 2029</span><span>≥50%</span></div><div class="progress"><div class="fill" style="width:13.7%"></div></div></div><div class="goal"><div class="goalhead"><span>Coche ≤ $200,000</span><span>Última prioridad</span></div><div class="progress"><div class="fill" style="width:0%"></div></div></div></div><div class="card wide"><div class="kicker">💡 Estrategia</div><div class="note">Primero estabilizar flujo y deudas. Después construir fondos de emergencia. Mantener los $200,000 invertidos y sumar capital. El coche queda al final y su costo total máximo es $200,000.</div></div></div></section>
-</main>
-<nav class="tabs"><button class="active" onclick="show('dashboard',this)"><span class="ico">🌸</span>Resumen</button><button onclick="show('registrar',this)"><span class="ico">✚</span>Registrar</button><button onclick="show('finanzas',this)"><span class="ico">💰</span>Finanzas</button><button onclick="show('metas',this)"><span class="ico">🌱</span>Metas</button></nav>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-const SUPABASE_URL = "https://gconmsfozomwfisnmgdq.supabase.co";
-const SUPABASE_KEY = "sb_publishable_ZLXQ1aAgucleTv3g6nfOuQ_zB4T6Acd";
-
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-async function cargarFinanzas() {
-  const { data: cuentas, error } = await supabaseClient
-    .from("accounts")
-    .select("*");
-
-  if (error) {
-    console.error("Error cargando cuentas:", error);
-    return;
-  }
-
-  const activos = cuentas
-    .filter(c => c.type === "asset")
-    .reduce((total, c) => total + Number(c.balance || 0), 0);
-
-  const pasivos = cuentas
-    .filter(c => c.type === "liability")
-    .reduce((total, c) => total + Number(c.balance || 0), 0);
-
-  const liquidez = activos;
-
-  const { data: settings, error: settingsError } =
-    await supabaseClient
-      .from("financial_settings")
-      .select("pending_income")
-      .eq("id", 1)
-      .single();
-
-  if (settingsError) {
-    console.error("Error cargando configuración:", settingsError);
-  }
-
-  const ingresoPendiente =
-    Number(settings?.pending_income || 0);
-
-  const liq = document.getElementById("liq");
-  const pending = document.getElementById("pending");
-  const accounts = document.getElementById("accounts");
-
-  if (liq) {
-    liq.textContent =
-      "$" + liquidez.toLocaleString("es-MX", {
-        minimumFractionDigits: 2
-      });
-  }
-
-  if (pending) {
-    pending.textContent =
-      "$" + ingresoPendiente.toLocaleString("es-MX", {
-        minimumFractionDigits: 2
-      });
-  }
-
-  if (accounts) {
-    accounts.textContent = cuentas.length;
-  }
-
-  console.log("Cuentas:", cuentas);
-  console.log("Activos:", activos);
-  console.log("Pasivos:", pasivos);
+:root{
+  --bg:#f7f4f8;
+  --card:#fff;
+  --ink:#29232d;
+  --muted:#817786;
+  --line:#ece5ef;
+  --purple:#5a356f;
+  --pink:#ef5b9b;
+  --pink2:#f6a4c6;
+  --green:#2e9b68;
+  --orange:#e58b35;
+  --red:#d94c62;
+  --shadow:0 10px 30px rgba(52,31,64,.08)
 }
 
-cargarFinanzas();
+*{
+  box-sizing:border-box
+}
+
+html{
+  min-height:100%;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif;
+  min-height:100vh;
+}
+
+button,
+input,
+select{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+#authBox{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:30px 24px;
+  box-shadow:0 20px 50px rgba(52,31,64,.12);
+}
+
+.login-brand{
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:.14em;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.login-card h2{
+  margin:0 0 8px;
+  font-size:25px;
+}
+
+.login-card p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  margin:0 0 22px;
+}
+
+.login-form{
+  display:grid;
+  gap:12px;
+}
+
+.login-form label{
+  display:grid;
+  gap:6px;
+}
+
+.login-error{
+  color:var(--red);
+  font-size:12px;
+  line-height:1.4;
+  min-height:18px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.top{
+  background:
+    linear-gradient(
+      145deg,
+      #271536,
+      #5a356f
+    );
+  color:#fff;
+  padding:24px 18px 18px;
+  border-radius:0 0 28px 28px;
+}
+
+.topline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.brand{
+  font-size:12px;
+  letter-spacing:.14em;
+  font-weight:800;
+  opacity:.8;
+}
+
+.date{
+  font-size:12px;
+  background:#ffffff18;
+  padding:8px 11px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+
+.logout{
+  border:1px solid #ffffff22;
+  background:#ffffff16;
+  color:white;
+  padding:7px 10px;
+  border-radius:18px;
+  font-size:11px;
+  font-weight:700;
+}
+
+h1{
+  font-size:28px;
+  line-height:1.05;
+  margin:12px 0 5px;
+}
+
+.sub{
+  font-size:13px;
+  color:#ddd0e3;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  max-width:980px;
+  margin:auto;
+  padding:14px 14px 100px;
+}
+
+.segment{
+  display:flex;
+  background:#eadfeb;
+  padding:4px;
+  border-radius:15px;
+  margin-bottom:14px;
+}
+
+.segment button{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#6d5d74;
+  padding:10px;
+  border-radius:12px;
+  font-weight:700;
+}
+
+.segment button.active{
+  background:var(--pink);
+  color:white;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:15px;
+  box-shadow:var(--shadow);
+}
+
+.wide{
+  grid-column:1/-1;
+}
+
+.card.span2{
+  grid-column:span 1;
+}
+
+.kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+  font-weight:800;
+}
+
+.big{
+  font-size:28px;
+  font-weight:850;
+  margin-top:5px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.good{
+  color:var(--green);
+}
+
+.bad{
+  color:var(--red);
+}
+
+.warn{
+  color:var(--orange);
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.row:last-child{
+  border-bottom:0;
+}
+
+.progress{
+  height:11px;
+  background:#eee8f0;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  background:
+    linear-gradient(
+      90deg,
+      var(--purple),
+      var(--pink)
+    );
+  border-radius:20px;
+  width:0%;
+  transition:width .4s ease;
+}
+
+.alert{
+  background:#fff5e9;
+  border-color:#f3d4a8;
+}
+
+.pill{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:10px;
+  background:#f3edf5;
+  color:#674e70;
+  font-size:11px;
+  font-weight:800;
+}
+
+.goal{
+  margin:12px 0;
+}
+
+.goalhead{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.note{
+  font-size:12px;
+  line-height:1.45;
+  color:var(--muted);
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:center;
+  z-index:100;
+  padding:
+    8px
+    max(8px,env(safe-area-inset-left))
+    calc(8px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 25px rgba(30,15,40,.08);
+}
+
+.tabs button{
+  flex:1;
+  max-width:180px;
+  border:0;
+  background:transparent;
+  color:#827584;
+  font-size:11px;
+  font-weight:700;
+  padding:5px;
+}
+
+.tabs button.active{
+  color:var(--pink);
+}
+
+.ico{
+  font-size:20px;
+  display:block;
+  margin-bottom:2px;
+}
+
+/* =========================
+   VIEWS
+========================= */
+
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+/* =========================
+   FORM
+========================= */
+
+form{
+  display:grid;
+  gap:9px;
+}
+
+label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+
+input,
+select{
+  width:100%;
+  border:1px solid #ddd3e2;
+  border-radius:12px;
+  padding:12px;
+  background:#fff;
+  color:var(--ink);
+}
+
+input:focus,
+select:focus{
+  outline:2px solid #f6a4c6;
+  outline-offset:1px;
+}
+
+.primary{
+  border:0;
+  background:var(--purple);
+  color:#fff;
+  border-radius:12px;
+  padding:13px;
+  font-weight:800;
+}
+
+.primary:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.secondary{
+  border:0;
+  background:#f0e8f3;
+  color:var(--purple);
+  border-radius:12px;
+  padding:11px;
+  font-weight:800;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.tx{
+  font-size:13px;
+}
+
+.empty{
+  padding:18px 0;
+  text-align:center;
+  color:var(--muted);
+}
+
+.status{
+  margin-top:8px;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.status.success{
+  color:var(--green);
+}
+
+.status.error{
+  color:var(--red);
+}
+
+.status.loading{
+  color:var(--muted);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(min-width:720px){
+
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .wide{
+    grid-column:1/-1;
+  }
+
+  .card.span2{
+    grid-column:span 2;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<div id="authBox">
+
+  <div class="login-card">
+
+    <div class="login-brand">
+      DEMETER FITNESS · FINANZAS
+    </div>
+
+    <h2>Acceso privado</h2>
+
+    <p>
+      Inicia sesión para consultar y administrar
+      tu información financiera.
+    </p>
+
+    <form
+      id="loginForm"
+      class="login-form"
+    >
+
+      <label>
+        Correo
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="tu correo"
+          required
+        >
+
+      </label>
+
+      <label>
+        Contraseña
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Tu contraseña"
+          required
+        >
+
+      </label>
+
+      <button
+        id="loginButton"
+        type="submit"
+        class="primary"
+      >
+        Entrar
+      </button>
+
+      <div
+        id="loginMessage"
+        class="login-error"
+      ></div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="top">
+
+  <div class="topline">
+
+    <div class="brand">
+      DEMETER FITNESS · FINANZAS
+    </div>
+
+    <div
+      class="date"
+      id="today"
+    ></div>
+
+    <button
+      id="logoutButton"
+      class="logout"
+      type="button"
+    >
+      Salir
+    </button>
+
+  </div>
+
+  <h1>
+    Tu jardín de metas
+  </h1>
+
+  <div class="sub">
+    Decisiones con el panorama completo,
+    no con una sola cuenta.
+  </div>
+
+</header>
+
+
+<!-- =========================
+     APP
+========================= -->
+
+<main id="appMain">
+
+  <!-- PERSONAL / ESTUDIO -->
+
+  <div class="segment">
+
+    <button
+      id="personalMode"
+      class="active"
+      type="button"
+    >
+      Personal
+    </button>
+
+    <button
+      id="studioMode"
+      type="button"
+    >
+      Estudio
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       DASHBOARD
+  ========================= -->
+
+  <section
+    id="dashboard"
+    class="view active"
+  >
+
+    <div class="grid">
+
+      <!-- LIQUIDEZ -->
+
+      <div class="card">
+
+        <div class="kicker">
+          Liquidez confirmada
+        </div>
+
+        <div
+          id="liq"
+          class="big"
+        >
+          $0.00
+        </div>
+
+        <div class="muted">
+          Activos registrados
+        </div>
+
+      </div>
+
+
+      <!-- INGRESO PENDIENTE -->
+
+      <div class="card">
+
+        <div class="kicker">
+          Ingreso pendiente
+        </div>
+
+        <div
+          id="pending"
+          class="big good"
+        >
+          $0.00
+        </div>
+
+        <div class="muted">
+          Último pago pendiente
+        </div>
+
+      </div>
+
+
+      <!-- RENTAS -->
+
+      <div class="card">
+
+        <div class="kicker">
+          Rentas próximas
+        </div>
+
+        <div class="big bad">
+          $18,000
+        </div>
+
+        <div class="muted">
+          1 y 5 de septiembre
+        </div>
+
+      </div>
+
+
+      <!-- BRECHA -->
+
+      <div class="card">
+
+        <div class="kicker">
+          Brecha proyectada
+        </div>
+
+        <div
+          id="gap"
+          class="big bad"
+        >
+          $0.00
+        </div>
+
+        <div class="muted">
+          Después del cobro pendiente
+        </div>
+
+      </div>
+
+
+      <!-- DECISION -->
+
+      <div class="card wide alert">
+
+        <div class="kicker">
+          🚦 Decisión actual
+        </div>
+
+        <h2
+          id="decision"
+          style="margin:6px 0"
+        >
+          Prioridad: fondear septiembre
+        </h2>
+
+        <div
+          id="decisionText"
+          class="note"
+        >
+          Cargando panorama financiero...
+        </div>
+
+      </div>
+
+
+      <!-- CALENDARIO -->
+
+      <div class="card wide">
+
+        <div class="kicker">
+          📅 Calendario financiero
+        </div>
+
+        <div class="row">
+
+          <span>
+            <b>29 ago</b><br>
+
+            <span class="muted">
+              Último pago de paquetes
+            </span>
+          </span>
+
+          <b class="good">
+            $2,454
+          </b>
+
+        </div>
+
+
+        <div class="row">
+
+          <span>
+            <b>1 sep</b><br>
+
+            <span class="muted">
+              Renta Demeter
+            </span>
+          </span>
+
+          <b class="bad">
+            $11,500
+          </b>
+
+        </div>
+
+
+        <div class="row">
+
+          <span>
+            <b>5 sep</b><br>
+
+            <span class="muted">
+              Renta casa
+            </span>
+          </span>
+
+          <b class="bad">
+            $6,500
+          </b>
+
+        </div>
+
+
+        <div class="row">
+
+          <span>
+            <b>20 sep</b><br>
+
+            <span class="muted">
+              Inicio tanda · propuesta 2 números
+            </span>
+          </span>
+
+          <b>
+            $2,000/sem.
+          </b>
+
+        </div>
+
+
+        <div class="row">
+
+          <span>
+            <b>nov 2029</b><br>
+
+            <span class="muted">
+              Ingreso extraordinario confirmado
+            </span>
+          </span>
+
+          <b class="good">
+            $325,000
+          </b>
+
+        </div>
+
+      </div>
+
+
+      <!-- CUENTAS -->
+
+      <div class="card span2">
+
+        <div class="kicker">
+          💧 Cuentas
+        </div>
+
+        <div id="accounts">
+          Cargando...
+        </div>
+
+      </div>
+
+
+      <!-- DEUDAS -->
+
+      <div class="card span2">
+
+        <div class="kicker">
+          💳 Deudas
+        </div>
+
+        <div class="row">
+
+          <span>
+            Mercado Pago crédito
+          </span>
+
+          <b>
+            $22,400*
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            DiDi crédito
+          </span>
+
+          <b>
+            $40,000*
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            Nu crédito
+          </span>
+
+          <b>
+            $1,100
+          </b>
+
+        </div>
+
+        <div class="muted">
+
+          *Saldos registrados previamente;
+          confirmar antes de abonos.
+
+        </div>
+
+      </div>
+
+
+      <!-- CASA -->
+
+      <div class="card wide">
+
+        <div class="kicker">
+          🎯 Meta: casa cubierta por inversiones
+        </div>
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Capital objetivo
+            </span>
+
+            <span>
+              $1,456,267
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              id="goalBar"
+              class="fill"
+            ></div>
+
+          </div>
+
+          <div
+            class="muted"
+            id="goalPct"
+          >
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            Capital invertido actual
+          </span>
+
+          <b>
+            $200,000
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            Escenario base
+          </span>
+
+          <b>
+            9% anual
+          </b>
+
+        </div>
+
+        <div class="note">
+
+          Objetivo calculado para cubrir
+          ~$10,922 mensuales de gastos base
+          de casa. El 9% es un supuesto de
+          planificación, no un rendimiento garantizado.
+
+        </div>
+
+      </div>
+
+
+      <!-- META 2029 -->
+
+      <div class="card wide">
+
+        <div class="kicker">
+          🏆 Meta 2029
+        </div>
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Objetivo mínimo
+            </span>
+
+            <span>
+              ≥ 50%
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              id="goal2029"
+              class="fill"
+              style="width:13.7%"
+            ></div>
+
+          </div>
+
+          <div class="muted">
+
+            Los $325,000 de noviembre de 2029
+            son un ingreso futuro, no liquidez actual.
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CAPITAL -->
+
+      <div class="card wide">
+
+        <div class="kicker">
+          ⚠️ Capital por conciliar
+        </div>
+
+        <div class="row">
+
+          <span>
+            Venta de computadora
+          </span>
+
+          <b>
+            $20,000
+          </b>
+
+        </div>
+
+        <div class="note">
+
+          Registrado como venta de activo.
+          No lo sumo a la liquidez hasta saber
+          dónde quedó, para evitar contar el mismo
+          dinero dos veces.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       REGISTRAR
+  ========================= -->
+
+  <section
+    id="registrar"
+    class="view"
+  >
+
+    <div class="card">
+
+      <div class="kicker">
+        ➕ Registro rápido
+      </div>
+
+      <h2>
+        ¿Qué pasó?
+      </h2>
+
+      <form id="form">
+
+        <label>
+
+          Monto
+
+          <input
+            id="amount"
+            type="number"
+            min="0"
+            step=".01"
+            placeholder="Ej. 500"
+            required
+          >
+
+        </label>
+
+
+        <label>
+
+          Tipo
+
+          <select id="type">
+
+            <option value="income">
+              Ingreso
+            </option>
+
+            <option value="expense">
+              Gasto
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+
+          Cuenta
+
+          <select id="account" required>
+
+            <option value="">
+              Cargando cuentas...
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+
+          Concepto
+
+          <input
+            id="concept"
+            placeholder="Ej. clase privada, súper, renta..."
+          >
+
+        </label>
+
+
+        <button
+          id="saveButton"
+          class="primary"
+          type="submit"
+        >
+          Guardar movimiento
+        </button>
+
+        <div
+          id="formStatus"
+          class="status"
+        ></div>
+
+      </form>
+
+    </div>
+
+
+    <!-- HISTORIAL -->
+
+    <div
+      class="card"
+      style="margin-top:11px"
+    >
+
+      <div class="kicker">
+        🧾 Historial
+      </div>
+
+      <div id="history">
+
+        <div class="empty">
+          Cargando movimientos...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       FINANZAS
+  ========================= -->
+
+  <section
+    id="finanzas"
+    class="view"
+  >
+
+    <div class="grid">
+
+      <div class="card wide">
+
+        <div class="kicker">
+          Mapa de decisión
+        </div>
+
+        <div class="row">
+
+          <span>
+            1 · Obligaciones próximas
+          </span>
+
+          <b>
+            Primero
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            2 · Liquidez mínima
+          </span>
+
+          <b>
+            Proteger
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            3 · Deuda cara
+          </span>
+
+          <b>
+            Confirmar saldo
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            4 · Inversión
+          </span>
+
+          <b>
+            Después
+          </b>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            5 · Coche
+          </span>
+
+          <b>
+            Última prioridad
+          </b>
+
+        </div>
+
+      </div>
+
+
+      <div class="card wide">
+
+        <div class="kicker">
+          Reglas del sistema
+        </div>
+
+        <div class="note">
+
+          Cada ingreso debe evaluarse contra
+          saldos, ingresos pendientes, próximos
+          vencimientos, deuda, liquidez mínima
+          y metas.
+
+          <br><br>
+
+          Una transferencia entre cuentas no es
+          ingreso.
+
+          <br><br>
+
+          Una venta de activo se registra aparte.
+
+          <br><br>
+
+          Una deuda de crédito nunca se confunde
+          con el saldo de débito.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       METAS
+  ========================= -->
+
+  <section
+    id="metas"
+    class="view"
+  >
+
+    <div class="grid">
+
+      <div class="card wide">
+
+        <div class="kicker">
+          🌱 Metas activas
+        </div>
+
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Salir de deudas
+            </span>
+
+            <span>
+              Prioridad 1
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="fill"
+              style="width:15%"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Casa pagada por inversiones
+            </span>
+
+            <span>
+              $200k / $1.456M
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              id="goalBar2"
+              class="fill"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Capital 2029
+            </span>
+
+            <span>
+              ≥50%
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="fill"
+              style="width:13.7%"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="goal">
+
+          <div class="goalhead">
+
+            <span>
+              Coche ≤ $200,000
+            </span>
+
+            <span>
+              Última prioridad
+            </span>
+
+          </div>
+
+          <div class="progress">
+
+            <div
+              class="fill"
+              style="width:0%"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card wide">
+
+        <div class="kicker">
+          💡 Estrategia
+        </div>
+
+        <div class="note">
+
+          Primero estabilizar flujo y deudas.
+          Después construir fondos de emergencia.
+
+          <br><br>
+
+          Mantener los $200,000 invertidos
+          y sumar capital.
+
+          <br><br>
+
+          El coche queda al final y su costo
+          total máximo es $200,000.
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- =========================
+     NAVEGACIÓN
+========================= -->
+
+<nav
+  class="tabs"
+  id="tabs"
+>
+
+  <button
+    class="active"
+    data-view="dashboard"
+    type="button"
+  >
+
+    <span class="ico">
+      🌸
+    </span>
+
+    Resumen
+
+  </button>
+
+
+  <button
+    data-view="registrar"
+    type="button"
+  >
+
+    <span class="ico">
+      ✚
+    </span>
+
+    Registrar
+
+  </button>
+
+
+  <button
+    data-view="finanzas"
+    type="button"
+  >
+
+    <span class="ico">
+      💰
+    </span>
+
+    Finanzas
+
+  </button>
+
+
+  <button
+    data-view="metas"
+    type="button"
+  >
+
+    <span class="ico">
+      🌱
+    </span>
+
+    Metas
+
+  </button>
+
+</nav>
+
+
+<!-- SUPABASE -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://gconmsfozomwfisnmgdq.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_ZLXQ1aAgucleTv3g6nfOuQ_zB4T6Acd";
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const authBox =
+  document.getElementById("authBox");
+
+const appMain =
+  document.getElementById("appMain");
+
+const tabs =
+  document.getElementById("tabs");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const loginMessage =
+  document.getElementById("loginMessage");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const form =
+  document.getElementById("form");
+
+const saveButton =
+  document.getElementById("saveButton");
+
+const formStatus =
+  document.getElementById("formStatus");
+
+const today =
+  document.getElementById("today");
+
+
+/* =========================================================
+   FECHA
+========================================================= */
+
+function actualizarFecha(){
+
+  const ahora =
+    new Date();
+
+  today.textContent =
+    ahora.toLocaleDateString(
+      "es-MX",
+      {
+        day:"numeric",
+        month:"short",
+        year:"numeric"
+      }
+    );
+
+}
+
+actualizarFecha();
+
+
+/* =========================================================
+   MOSTRAR / OCULTAR APP
+========================================================= */
+
+function mostrarLogin(){
+
+  authBox.style.display =
+    "flex";
+
+  appMain.style.display =
+    "none";
+
+  tabs.style.display =
+    "none";
+
+}
+
+
+function mostrarAplicacion(){
+
+  authBox.style.display =
+    "none";
+
+  appMain.style.display =
+    "block";
+
+  tabs.style.display =
+    "flex";
+
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+function show(viewId, button){
+
+  document
+    .querySelectorAll(".view")
+    .forEach(view => {
+
+      view.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  const view =
+    document.getElementById(
+      viewId
+    );
+
+
+  if(view){
+
+    view.classList.add(
+      "active"
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(".tabs button")
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  if(button){
+
+    button.classList.add(
+      "active"
+    );
+
+  }
+
+}
+
+
+/* Eventos de navegación */
+
+document
+  .querySelectorAll(".tabs button")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      function(){
+
+        show(
+          this.dataset.view,
+          this
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   MODO PERSONAL / ESTUDIO
+========================================================= */
+
+let currentMode =
+  "personal";
+
+
+function setMode(mode, button){
+
+  currentMode =
+    mode;
+
+
+  document
+    .querySelectorAll(".segment button")
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  button.classList.add(
+    "active"
+  );
+
+
+  console.log(
+    "Modo actual:",
+    currentMode
+  );
+
+
+  /*
+    Por ahora ambos modos utilizan
+    la misma base financiera.
+
+    Más adelante podemos separar:
+    - Finanzas personales
+    - Finanzas Demeter
+    - cuentas
+    - ingresos
+    - gastos
+    - metas
+  */
+
+}
+
+
+document
+  .getElementById("personalMode")
+  .addEventListener(
+    "click",
+    function(){
+
+      setMode(
+        "personal",
+        this
+      );
+
+    }
+  );
+
+
+document
+  .getElementById("studioMode")
+  .addEventListener(
+    "click",
+    function(){
+
+      setMode(
+        "studio",
+        this
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginForm.addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+
+    const email =
+      document
+        .getElementById(
+          "loginEmail"
+        )
+        .value
+        .trim();
+
+
+    const password =
+      document
+        .getElementById(
+          "loginPassword"
+        )
+        .value;
+
+
+    loginButton.disabled =
+      true;
+
+    loginButton.textContent =
+      "Entrando...";
+
+    loginMessage.textContent =
+      "";
+
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth
+        .signInWithPassword({
+          email,
+          password
+        });
+
+
+    if(error){
+
+      console.error(
+        "Error de login:",
+        error
+      );
+
+
+      loginMessage.textContent =
+        "No se pudo iniciar sesión. Revisa tu correo y contraseña.";
+
+      loginButton.disabled =
+        false;
+
+      loginButton.textContent =
+        "Entrar";
+
+      return;
+
+    }
+
+
+    console.log(
+      "Sesión iniciada:",
+      data.user
+    );
+
+
+    loginButton.disabled =
+      false;
+
+    loginButton.textContent =
+      "Entrar";
+
+  }
+);
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutButton.addEventListener(
+  "click",
+  async function(){
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+  }
+);
+
+
+/* =========================================================
+   CARGAR FINANZAS
+========================================================= */
+
+async function cargarFinanzas(){
+
+  console.log(
+    "Cargando finanzas..."
+  );
+
+
+  const {
+    data: cuentas,
+    error
+  } =
+    await supabaseClient
+      .from("accounts")
+      .select("*")
+      .order("name");
+
+
+  if(error){
+
+    console.error(
+      "Error cargando cuentas:",
+      error
+    );
+
+    mostrarErrorFinanzas(
+      error
+    );
+
+    return;
+
+  }
+
+
+  const activos =
+    cuentas
+      .filter(
+        c => c.type === "asset"
+      )
+      .reduce(
+        (total,c) =>
+          total +
+          Number(
+            c.balance || 0
+          ),
+        0
+      );
+
+
+  const pasivos =
+    cuentas
+      .filter(
+        c => c.type === "liability"
+      )
+      .reduce(
+        (total,c) =>
+          total +
+          Number(
+            c.balance || 0
+          ),
+        0
+      );
+
+
+  const liquidez =
+    activos;
+
+
+  /*
+    financial_settings
+  */
+
+  const {
+    data: settings,
+    error: settingsError
+  } =
+    await supabaseClient
+      .from(
+        "financial_settings"
+      )
+      .select(
+        "pending_income"
+      )
+      .eq(
+        "id",
+        1
+      )
+      .single();
+
+
+  if(settingsError){
+
+    console.error(
+      "Error cargando configuración:",
+      settingsError
+    );
+
+  }
+
+
+  const ingresoPendiente =
+    Number(
+      settings?.pending_income || 0
+    );
+
+
+  /* Actualizar liquidez */
+
+  const liq =
+    document.getElementById(
+      "liq"
+    );
+
+
+  if(liq){
+
+    liq.textContent =
+      formatearPesos(
+        liquidez
+      );
+
+  }
+
+
+  /* Actualizar pendiente */
+
+  const pending =
+    document.getElementById(
+      "pending"
+    );
+
+
+  if(pending){
+
+    pending.textContent =
+      formatearPesos(
+        ingresoPendiente
+      );
+
+  }
+
+
+  /* Número de cuentas */
+
+  const accounts =
+    document.getElementById(
+      "accounts"
+    );
+
+
+  if(accounts){
+
+    accounts.innerHTML =
+      `
+      <div class="big">
+        ${cuentas.length}
+      </div>
+
+      <div class="muted">
+        ${cuentas.filter(
+          c => c.type === "asset"
+        ).length}
+        cuentas de activo ·
+        ${cuentas.filter(
+          c => c.type === "liability"
+        ).length}
+        cuentas de deuda
+      </div>
+      `;
+
+  }
+
+
+  /* Brecha septiembre */
+
+  const obligaciones =
+    18000;
+
+
+  const gap =
+    Math.max(
+      0,
+      obligaciones -
+      (
+        liquidez +
+        ingresoPendiente
+      )
+    );
+
+
+  const gapElement =
+    document.getElementById(
+      "gap"
+    );
+
+
+  if(gapElement){
+
+    gapElement.textContent =
+      formatearPesos(
+        gap
+      );
+
+  }
+
+
+  /* Decisión */
+
+  const decision =
+    document.getElementById(
+      "decision"
+    );
+
+  const decisionText =
+    document.getElementById(
+      "decisionText"
+    );
+
+
+  if(gap > 0){
+
+    if(decision){
+
+      decision.textContent =
+        "Prioridad: fondear septiembre";
+
+    }
+
+    if(decisionText){
+
+      decisionText.textContent =
+        `Después del ingreso pendiente todavía faltarían ${formatearPesos(gap)} para cubrir las rentas próximas. No es momento de acelerar inversión ni comprar el coche.`;
+
+    }
+
+  }else{
+
+    if(decision){
+
+      decision.textContent =
+        "Septiembre está cubierto";
+
+    }
+
+    if(decisionText){
+
+      decisionText.textContent =
+        "La liquidez actual más el ingreso pendiente alcanzan para cubrir las rentas próximas registradas.";
+
+    }
+
+  }
+
+
+  /* Meta casa */
+
+  const capitalActual =
+    200000;
+
+  const capitalObjetivo =
+    1456267;
+
+  const porcentajeCasa =
+    Math.min(
+      100,
+      (
+        capitalActual /
+        capitalObjetivo
+      ) * 100
+    );
+
+
+  const goalBar =
+    document.getElementById(
+      "goalBar"
+    );
+
+  const goalBar2 =
+    document.getElementById(
+      "goalBar2"
+    );
+
+  const goalPct =
+    document.getElementById(
+      "goalPct"
+    );
+
+
+  if(goalBar){
+
+    goalBar.style.width =
+      porcentajeCasa + "%";
+
+  }
+
+
+  if(goalBar2){
+
+    goalBar2.style.width =
+      porcentajeCasa + "%";
+
+  }
+
+
+  if(goalPct){
+
+    goalPct.textContent =
+      `${porcentajeCasa.toFixed(1)}% del capital objetivo`;
+
+  }
+
+
+  console.log(
+    "Activos:",
+    activos
+  );
+
+  console.log(
+    "Pasivos:",
+    pasivos
+  );
+
+  console.log(
+    "Liquidez:",
+    liquidez
+  );
+
+}
+
+
+/* =========================================================
+   ERROR FINANZAS
+========================================================= */
+
+function mostrarErrorFinanzas(error){
+
+  const liq =
+    document.getElementById(
+      "liq"
+    );
+
+  if(liq){
+
+    liq.textContent =
+      "Error";
+
+  }
+
+
+  const accounts =
+    document.getElementById(
+      "accounts"
+    );
+
+  if(accounts){
+
+    accounts.innerHTML =
+      `
+      <div class="bad">
+        No se pudieron cargar las cuentas.
+      </div>
+      `;
+
+  }
+
+}
+
+
+/* =========================================================
+   FORMATEAR PESOS
+========================================================= */
+
+function formatearPesos(
+  numero
+){
+
+  return "$" +
+    Number(
+      numero || 0
+    ).toLocaleString(
+      "es-MX",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+/* =========================================================
+   CARGAR CUENTAS EN FORMULARIO
+========================================================= */
+
+async function cargarCuentasParaRegistro(){
+
+  const select =
+    document.getElementById(
+      "account"
+    );
+
+
+  if(!select){
+
+    return;
+
+  }
+
+
+  const {
+    data: cuentas,
+    error
+  } =
+    await supabaseClient
+      .from("accounts")
+      .select(
+        "id,name,type"
+      )
+      .order("name");
+
+
+  if(error){
+
+    console.error(
+      "Error cargando cuentas:",
+      error
+    );
+
+
+    select.innerHTML =
+      `
+      <option value="">
+        Error cargando cuentas
+      </option>
+      `;
+
+    return;
+
+  }
+
+
+  if(!cuentas.length){
+
+    select.innerHTML =
+      `
+      <option value="">
+        No hay cuentas
+      </option>
+      `;
+
+    return;
+
+  }
+
+
+  select.innerHTML =
+    `
+    <option value="">
+      Selecciona una cuenta
+    </option>
+    `;
+
+
+  cuentas.forEach(
+    cuenta => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        cuenta.id;
+
+
+      option.textContent =
+        cuenta.name;
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   REGISTRAR MOVIMIENTO
+========================================================= */
+
+form.addEventListener(
+  "submit",
+  async function(event){
+
+    event.preventDefault();
+
+
+    formStatus.className =
+      "status loading";
+
+    formStatus.textContent =
+      "Guardando movimiento...";
+
+    saveButton.disabled =
+      true;
+
+
+    const amount =
+      Number(
+        document.getElementById(
+          "amount"
+        ).value
+      );
+
+
+    const type =
+      document.getElementById(
+        "type"
+      ).value;
+
+
+    const accountId =
+      document.getElementById(
+        "account"
+      ).value;
+
+
+    const concept =
+      document.getElementById(
+        "concept"
+      ).value.trim();
+
+
+    if(
+      !amount ||
+      amount <= 0
+    ){
+
+      mostrarEstadoFormulario(
+        "Escribe un monto válido.",
+        "error"
+      );
+
+      saveButton.disabled =
+        false;
+
+      return;
+
+    }
+
+
+    if(!accountId){
+
+      mostrarEstadoFormulario(
+        "Selecciona una cuenta.",
+        "error"
+      );
+
+      saveButton.disabled =
+        false;
+
+      return;
+
+    }
+
+
+    /*
+      Obtener usuario autenticado
+    */
+
+    const {
+      data: userData,
+      error: userError
+    } =
+      await supabaseClient
+        .auth
+        .getUser();
+
+
+    if(
+      userError ||
+      !userData.user
+    ){
+
+      mostrarEstadoFormulario(
+        "La sesión no está activa.",
+        "error"
+      );
+
+      saveButton.disabled =
+        false;
+
+      return;
+
+    }
+
+
+    /*
+      Insertar movimiento
+    */
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("transactions")
+        .insert({
+
+          amount:
+            amount,
+
+          type:
+            type,
+
+          account_id:
+            accountId,
+
+          concept:
+            concept ||
+            null,
+
+          transaction_date:
+            new Date()
+              .toISOString()
+              .slice(0,10),
+
+          user_id:
+            userData.user.id
+
+        });
+
+
+    if(error){
+
+      console.error(
+        "Error guardando movimiento:",
+        error
+      );
+
+
+      mostrarEstadoFormulario(
+        "No se pudo guardar. Revisa la consola para ver el error.",
+        "error"
+      );
+
+      saveButton.disabled =
+        false;
+
+      return;
+
+    }
+
+
+    /*
+      Limpiar formulario
+    */
+
+    form.reset();
+
+
+    mostrarEstadoFormulario(
+      "Movimiento guardado correctamente.",
+      "success"
+    );
+
+
+    /*
+      Actualizar dashboard
+    */
+
+    await cargarFinanzas();
+
+    await cargarHistorial();
+
+
+    saveButton.disabled =
+      false;
+
+  }
+);
+
+
+/* =========================================================
+   ESTADO DEL FORMULARIO
+========================================================= */
+
+function mostrarEstadoFormulario(
+  mensaje,
+  tipo
+){
+
+  formStatus.className =
+    "status " + tipo;
+
+  formStatus.textContent =
+    mensaje;
+
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+async function cargarHistorial(){
+
+  const history =
+    document.getElementById(
+      "history"
+    );
+
+
+  if(!history){
+
+    return;
+
+  }
+
+
+  history.innerHTML =
+    `
+    <div class="empty">
+      Cargando movimientos...
+    </div>
+    `;
+
+
+  const {
+    data: movimientos,
+    error
+  } =
+    await supabaseClient
+      .from("transactions")
+      .select(`
+        id,
+        amount,
+        type,
+        concept,
+        transaction_date,
+        accounts(name)
+      `)
+      .order(
+        "transaction_date",
+        {
+          ascending:false
+        }
+      )
+      .limit(30);
+
+
+  if(error){
+
+    console.error(
+      "Error cargando historial:",
+      error
+    );
+
+
+    history.innerHTML =
+      `
+      <div class="empty bad">
+        No se pudo cargar el historial.
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  if(
+    !movimientos ||
+    !movimientos.length
+  ){
+
+    history.innerHTML =
+      `
+      <div class="empty">
+        Todavía no hay movimientos.
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  history.innerHTML =
+    "";
+
+
+  movimientos.forEach(
+    movimiento => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "row";
+
+
+      const esIngreso =
+        movimiento.type ===
+        "income";
+
+
+      const signo =
+        esIngreso
+          ? "+"
+          : "-";
+
+
+      const clase =
+        esIngreso
+          ? "good"
+          : "bad";
+
+
+      const concepto =
+        movimiento.concept ||
+        (
+          esIngreso
+            ? "Ingreso"
+            : "Gasto"
+        );
+
+
+      const cuenta =
+        movimiento.accounts?.name ||
+        "Sin cuenta";
+
+
+      div.innerHTML =
+        `
+
+        <span class="tx">
+
+          <b>
+            ${escapeHTML(
+              concepto
+            )}
+          </b>
+
+          <br>
+
+          <span class="muted">
+
+            ${escapeHTML(
+              cuenta
+            )}
+
+            ·
+
+            ${escapeHTML(
+              movimiento.transaction_date
+            )}
+
+          </span>
+
+        </span>
+
+
+        <b class="${clase}">
+
+          ${signo}${formatearPesos(
+            movimiento.amount
+          )}
+
+        </b>
+
+        `;
+
+
+      history.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SEGURIDAD HTML
+========================================================= */
+
+function escapeHTML(
+  texto
+){
+
+  return String(
+    texto ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   AUTENTICACIÓN
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+  async function(
+    event,
+    session
+  ){
+
+    console.log(
+      "Auth event:",
+      event
+    );
+
+
+    if(session){
+
+      mostrarAplicacion();
+
+      await cargarFinanzas();
+
+      await cargarHistorial();
+
+      await cargarCuentasParaRegistro();
+
+    }else{
+
+      mostrarLogin();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INICIALIZAR APP
+========================================================= */
+
+async function iniciarApp(){
+
+  mostrarLogin();
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(error){
+
+    console.error(
+      "Error obteniendo sesión:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  if(data.session){
+
+    mostrarAplicacion();
+
+    await cargarFinanzas();
+
+    await cargarHistorial();
+
+    await cargarCuentasParaRegistro();
+
+  }else{
+
+    mostrarLogin();
+
+  }
+
+}
+
+
+iniciarApp();
+
 </script>
+
+</body>
+</html>
