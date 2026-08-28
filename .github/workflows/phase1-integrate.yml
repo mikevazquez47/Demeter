@@ -1,0 +1,39 @@
+name: Integrate Phase 1
+on:
+  push:
+    branches: [phase-0-centro-control]
+permissions:
+  contents: write
+jobs:
+  integrate:
+    if: "!contains(github.event.head_commit.message, 'Phase 1 integrated')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrate Phase 1 assets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          css = '<link rel="stylesheet" href="phase1-shell.css">'
+          js = '<script src="phase1-shell.js"></script>'
+          if css not in s:
+              s = s.replace('</head>', css + '\n</head>')
+          if js not in s:
+              s = s.replace('</body>', js + '\n</body>')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Basic structural checks
+        run: |
+          test -f phase1-shell.css
+          test -f phase1-shell.js
+          grep -q 'phase1-shell.css' index.html
+          grep -q 'phase1-shell.js' index.html
+      - name: Commit integration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Phase 1 integrated' || exit 0
+          git push
