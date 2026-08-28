@@ -14,19 +14,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Corregir etiqueta duplicada
+      - name: Corregir pantalla en blanco
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          old = '<section id="finanzas"<section id="finanzas" class="view">'
-          new = '<section id="finanzas" class="view">'
-          if old in s:
-              p.write_text(s.replace(old, new, 1), encoding='utf-8')
-              print('Sintaxis corregida.')
+          fixes = [
+              ('<section id="finanzas"<section id="finanzas" class="view">', '<section id="finanzas" class="view">'),
+              ("$('transferDate').value=s", "if($('transferDate'))$('transferDate').value=s"),
+          ]
+          changed = False
+          for old, new in fixes:
+              if old in s:
+                  s = s.replace(old, new, 1)
+                  changed = True
+          if changed:
+              p.write_text(s, encoding='utf-8')
+              print('Correcciones aplicadas.')
           else:
-              print('No se encontró la secuencia defectuosa; no se modifica el archivo.')
+              print('No se encontraron correcciones pendientes.')
           PY
       - name: Commit y push
         run: |
@@ -36,6 +43,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Sin cambios.'
           else
-            git commit -m 'Corregir pantalla en blanco'
+            git commit -m 'Corregir inicializacion de movimientos'
             git push
           fi
