@@ -1,0 +1,35 @@
+name: activate-phase7
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  activate:
+    if: "!contains(github.event.head_commit.message, '[phase7-activate]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrate phase 7
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          tag='<script src="phase7-goals.js"></script>'
+          if tag not in s:
+              s=s.replace('</body>',tag+'\n</body>')
+              p.write_text(s)
+          PY
+      - name: Commit integration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m '[phase7-activate] Integrar metas personalizadas' || exit 0
+          git push
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/activate-phase7.yml || true
+          git commit -m '[phase7-activate] Limpiar workflow temporal' || true
+          git push || true
