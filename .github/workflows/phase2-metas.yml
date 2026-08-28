@@ -1,0 +1,65 @@
+name: Fase 2 - Metas inteligentes
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade-metas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Actualizar módulo de metas
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_css = '.goal{margin:13px 0}.goalhead{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:850;margin-bottom:6px}'
+          new_css = old_css + '.goal-card{background:linear-gradient(145deg,#17191d,#101214);border:1px solid #2b3035;border-radius:18px;padding:15px;margin-top:10px}.goal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.goal-title{font-size:15px;font-weight:900}.goal-priority{font-size:9px;text-transform:uppercase;letter-spacing:.08em;padding:5px 8px;border-radius:999px;background:#25292d;color:#bfc4c5;white-space:nowrap}.goal-priority.high{background:var(--rose-soft);color:#ff78aa}.goal-priority.low{background:#20241f;color:#91df80}.goal-value{font-size:23px;font-weight:900;margin:12px 0 4px}.goal-next{margin-top:10px;padding:10px 11px;border-radius:13px;background:#1b1e22;color:#bfc4c5;font-size:12px;line-height:1.45}.goal-next b{color:#f2f3f1}.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.goal-kpi{background:#1b1e22;border:1px solid #2a2f34;border-radius:14px;padding:11px}.goal-kpi span{display:block;color:var(--muted);font-size:10px}.goal-kpi b{display:block;margin-top:4px;font-size:15px}.goal-add{width:100%;margin-top:10px;border:1px dashed #3a4046;background:#14171a;color:#ff6b9f;border-radius:15px;padding:12px;font-weight:850}'
+          s = s.replace(old_css, new_css, 1)
+
+          old_dash = '<div class="card wide" id="personalGoals"><div class="kicker">🌱 Metas personales</div><div class="goal"><div class="goalhead"><span>Casa cubierta por inversiones</span><span>$200k / $1.456M</span></div><div class="progress"><div class="fill" style="width:13.73%"></div></div><div class="muted">13.7% del capital objetivo</div></div><div class="row"><span>Capital invertido actual</span><b>$200,000</b></div><div class="row"><span>Escenario base</span><b>9% anual</b></div><div class="note">Supuesto de planificación, no rendimiento garantizado.</div><div class="goal"><div class="goalhead"><span>Capital 2029</span><span>≥50%</span></div><div class="progress"><div class="fill" style="width:13.7%"></div></div></div><div class="goal"><div class="goalhead"><span>Coche ≤ $200,000</span><span>Última prioridad</span></div><div class="progress"><div class="fill" style="width:0%"></div></div></div></div>'
+          new_dash = '<div class="card wide" id="personalGoals"><div class="kicker">🌱 Metas personales</div><div id="dashboardGoals"></div></div>'
+          if old_dash not in s:
+              raise SystemExit('No se encontró el bloque de metas del dashboard')
+          s = s.replace(old_dash, new_dash, 1)
+
+          old_metas = '<section id="metas" class="view"><div class="grid"><div class="card wide"><div class="kicker">🌱 Metas activas</div><div class="goal"><div class="goalhead"><span>Salir de deudas</span><span>Prioridad 1</span></div><div class="progress"><div class="fill" style="width:15%"></div></div></div><div class="goal"><div class="goalhead"><span>Casa pagada por inversiones</span><span>$200k / $1.456M</span></div><div class="progress"><div class="fill" style="width:13.73%"></div></div></div><div class="goal"><div class="goalhead"><span>Capital 2029</span><span>≥50%</span></div><div class="progress"><div class="fill" style="width:13.7%"></div></div></div><div class="goal"><div class="goalhead"><span>Coche ≤ $200,000</span><span>Última prioridad</span></div><div class="progress"><div class="fill" style="width:0%"></div></div></div></div></div></section>'
+          new_metas = '<section id="metas" class="view"><div class="card wide"><div class="kicker">🌱 Sistema de metas</div><h2 style="margin:7px 0 4px">Tu dinero tiene dirección</h2><div class="note">Las metas se leen desde tu situación financiera actual. Cada avance debe tener una razón y una siguiente acción.</div><div id="goalsPage"></div><button class="goal-add" onclick="toast(\'La creación de metas personalizadas será la siguiente ampliación.\')">＋ Próximamente: crear meta personalizada</button></div></section>'
+          if old_metas not in s:
+              raise SystemExit('No se encontró el bloque de metas')
+          s = s.replace(old_metas, new_metas, 1)
+
+          marker = "function render(){const assets=accountsData.filter(a=>a.type==='asset')"
+          goal_js = "function goalData(liq,debt){return[{title:'Salir de deudas',priority:'Prioridad 1',priorityClass:'high',value:money(debt),target:'$0',pct:debt>0?Math.max(0,Math.min(100,100-(debt/63500*100))):100,next:debt>0?'Todo peso extraordinario debe ir primero a reducir pasivos, salvo que necesites conservar liquidez mínima.':'Deuda liquidada. Mantén el colchón y evita volver a financiar consumo.'},{title:'Fondo de emergencia',priority:'Prioridad 2',priorityClass:'',value:'$0',target:'6 meses de gastos fijos',pct:0,next:'Primero necesitamos definir el monto objetivo real a partir de tus gastos fijos actuales y separar ese dinero de la operación.'},{title:'Capital invertido',priority:'Construcción',priorityClass:'low',value:'$200,000',target:'Capital 2029',pct:13.7,next:'No aumentes riesgo para perseguir rendimiento. La siguiente decisión depende de deuda, liquidez y flujo mensual.'},{title:'Coche ≤ $200,000',priority:'Última prioridad',priorityClass:'low',value:'$0',target:'$200,000',pct:0,next:'No se financia con dinero que debería ir a deuda, emergencia o preservación de inversiones.'}]}function renderGoals(){const assets=accountsData.filter(a=>a.type==='asset'),debts=accountsData.filter(a=>a.type==='liability'),liq=assets.reduce((s,a)=>s+Number(a.balance||0),0),debt=debts.reduce((s,a)=>s+Number(a.balance||0),0),goals=goalData(liq,debt);const html=goals.map(g=>`<div class=\"goal-card\"><div class=\"goal-top\"><div class=\"goal-title\">${g.title}</div><div class=\"goal-priority ${g.priorityClass}\">${g.priority}</div></div><div class=\"goal-value\">${g.value}</div><div class=\"muted\">Objetivo: ${g.target}</div><div class=\"progress\" style=\"margin-top:11px\"><div class=\"fill ${g.priorityClass==='low'?'green':''}\" style=\"width:${g.pct}%\"></div></div><div class=\"goal-grid\" style=\"margin-top:10px\"><div class=\"goal-kpi\"><span>Progreso</span><b>${g.pct.toFixed(1)}%</b></div><div class=\"goal-kpi\"><span>Liquidez actual</span><b>${money(liq)}</b></div></div><div class=\"goal-next\"><b>Siguiente acción:</b> ${g.next}</div></div>`).join('');$('goalsPage').innerHTML=html;$('dashboardGoals').innerHTML=goals.slice(0,3).map(g=>`<div class=\"goal\"><div class=\"goalhead\"><span>${g.title}</span><span>${g.pct.toFixed(1)}%</span></div><div class=\"progress\"><div class=\"fill ${g.priorityClass==='low'?'green':''}\" style=\"width:${g.pct}%\"></div></div><div class=\"muted\">${g.next}</div></div>`).join('')}"
+          if marker not in s:
+              raise SystemExit('No se encontró el punto de inserción JS')
+          s = s.replace(marker, goal_js + marker, 1)
+
+          old_load = "render();renderAccounts();renderDebts();renderHistory();renderSelects();renderCalendar()}"
+          new_load = "render();renderAccounts();renderDebts();renderHistory();renderSelects();renderCalendar();renderGoals()}"
+          if old_load not in s:
+              raise SystemExit('No se encontró la carga de datos')
+          s = s.replace(old_load, new_load, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Publicar cambio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Sin cambios que publicar"
+          else
+            git commit -m "Implementar fase 2 de metas"
+            git push
+          fi
