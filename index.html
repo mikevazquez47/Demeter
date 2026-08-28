@@ -31,6 +31,77 @@
 <section id="metas" class="view"><div class="grid"><div class="card wide"><div class="kicker">🌱 Metas activas</div><div class="goal"><div class="goalhead"><span>Salir de deudas</span><span>Prioridad 1</span></div><div class="progress"><div class="fill" style="width:15%"></div></div></div><div class="goal"><div class="goalhead"><span>Casa pagada por inversiones</span><span>$200k / $1.456M</span></div><div class="progress"><div id="goalBar2" class="fill"></div></div></div><div class="goal"><div class="goalhead"><span>Capital 2029</span><span>≥50%</span></div><div class="progress"><div class="fill" style="width:13.7%"></div></div></div><div class="goal"><div class="goalhead"><span>Coche ≤ $200,000</span><span>Última prioridad</span></div><div class="progress"><div class="fill" style="width:0%"></div></div></div></div><div class="card wide"><div class="kicker">💡 Estrategia</div><div class="note">Primero estabilizar flujo y deudas. Después construir fondos de emergencia. Mantener los $200,000 invertidos y sumar capital. El coche queda al final y su costo total máximo es $200,000.</div></div></div></section>
 </main>
 <nav class="tabs"><button class="active" onclick="show('dashboard',this)"><span class="ico">🌸</span>Resumen</button><button onclick="show('registrar',this)"><span class="ico">✚</span>Registrar</button><button onclick="show('finanzas',this)"><span class="ico">💰</span>Finanzas</button><button onclick="show('metas',this)"><span class="ico">🌱</span>Metas</button></nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-const KEY="mike_finanzas_v4";const base={accounts:{"Efectivo":100,"Bancomer débito":0,"Mercado Pago débito":3772,"Mercado Pago crédito":22400,"DiDi crédito":40000,"Nu crédito":1100},pending:2454,tx:[]};let s=JSON.parse(localStorage.getItem(KEY)||"null")||structuredClone(base);const money=n=>new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:0}).format(n);function liquid(){return s.accounts["Efectivo"]+s.accounts["Bancomer débito"]+s.accounts["Mercado Pago débito"]}function render(){let l=liquid(),future=l+s.pending,gap=Math.max(0,18000-future);document.getElementById("liq").textContent=money(l);document.getElementById("pending").textContent=money(s.pending);document.getElementById("gap").textContent=money(gap);document.getElementById("goalBar").style.width=(200000/1456267*100)+"%";document.getElementById("goalBar2").style.width=(200000/1456267*100)+"%";document.getElementById("goalPct").textContent="13.7% del objetivo";document.getElementById("goal2029").style.width="13.7%";document.getElementById("decisionText").textContent=`Hay ${money(l)} líquidos confirmados y ${money(s.pending)} pendientes. Antes de abonos extraordinarios, la prioridad es cubrir las rentas de septiembre.`;document.getElementById("accounts").innerHTML=Object.entries(s.accounts).map(([k,v])=>`<div class="row"><span>${k}</span><b>${money(v)}</b></div>`).join("");document.getElementById("history").innerHTML=s.tx.length?s.tx.slice(-20).reverse().map(t=>`<div class="row tx"><span><b>${t.type==="income"?"+":"−"}${money(t.amount)}</b><br><span class="muted">${t.account} · ${t.concept||"Sin concepto"}</span></span><span class="muted">${t.date}</span></div>`).join(""):"<div class='empty'>Aún no hay movimientos registrados en esta versión.</div>"}function show(id,btn){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}function setMode(mode,btn){document.querySelectorAll(".segment button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}document.getElementById("form").addEventListener("submit",e=>{e.preventDefault();let amount=+document.getElementById("amount").value,type=document.getElementById("type").value,account=document.getElementById("account").value,concept=document.getElementById("concept").value;if(type==="income")s.accounts[account]=(s.accounts[account]||0)+amount;else s.accounts[account]=(s.accounts[account]||0)-amount;s.tx.push({amount,type,account,concept,date:new Date().toLocaleDateString("es-MX")});localStorage.setItem(KEY,JSON.stringify(s));e.target.reset();render();show("registrar",document.querySelectorAll(".tabs button")[1])});document.getElementById("today").textContent=new Intl.DateTimeFormat("es-MX",{weekday:"long",day:"numeric",month:"long"}).format(new Date());render();
-</script></body></html>
+const SUPABASE_URL = "https://gconmsfozomwfisnmgdq.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ZLXQ1aAgucleTv3g6nfOuQ_zB4T6Acd";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function cargarFinanzas() {
+  const { data: cuentas, error } = await supabaseClient
+    .from("accounts")
+    .select("*");
+
+  if (error) {
+    console.error("Error cargando cuentas:", error);
+    return;
+  }
+
+  const activos = cuentas
+    .filter(c => c.type === "asset")
+    .reduce((total, c) => total + Number(c.balance || 0), 0);
+
+  const pasivos = cuentas
+    .filter(c => c.type === "liability")
+    .reduce((total, c) => total + Number(c.balance || 0), 0);
+
+  const liquidez = activos;
+
+  const { data: settings, error: settingsError } =
+    await supabaseClient
+      .from("financial_settings")
+      .select("pending_income")
+      .eq("id", 1)
+      .single();
+
+  if (settingsError) {
+    console.error("Error cargando configuración:", settingsError);
+  }
+
+  const ingresoPendiente =
+    Number(settings?.pending_income || 0);
+
+  const liq = document.getElementById("liq");
+  const pending = document.getElementById("pending");
+  const accounts = document.getElementById("accounts");
+
+  if (liq) {
+    liq.textContent =
+      "$" + liquidez.toLocaleString("es-MX", {
+        minimumFractionDigits: 2
+      });
+  }
+
+  if (pending) {
+    pending.textContent =
+      "$" + ingresoPendiente.toLocaleString("es-MX", {
+        minimumFractionDigits: 2
+      });
+  }
+
+  if (accounts) {
+    accounts.textContent = cuentas.length;
+  }
+
+  console.log("Cuentas:", cuentas);
+  console.log("Activos:", activos);
+  console.log("Pasivos:", pasivos);
+}
+
+cargarFinanzas();
+</script>
