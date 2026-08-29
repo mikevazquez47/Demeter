@@ -1,4 +1,4 @@
-(() => {
+(()=>{
   'use strict';
   function installVisualLayer() {
     if (document.getElementById('mc-safe-visual-layer')) return;
@@ -20,9 +20,10 @@
     function navigate(view){document.querySelectorAll('.mc-safe-nav button,.mc-safe-bottom button').forEach(b=>b.classList.remove('active'));document.querySelectorAll('[data-view="'+view+'"]').forEach(b=>b.classList.add('active'));try{if(typeof window.show==='function')window.show(view,document.querySelector('#tabs button'))}catch(e){console.warn('Navigation bridge:',e)}}
     document.querySelectorAll('.mc-safe-nav button,.mc-safe-bottom button').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
 
-    // Auth safety net: never let the visual shell hide the real application.
-    const syncAuth=()=>{try{const app=document.getElementById('appView'),login=document.getElementById('loginView');if(typeof currentUser!=='undefined'&&currentUser){app?.classList.remove('hidden');document.getElementById('tabs')?.classList.remove('hidden');login?.classList.add('hidden');}else if(app?.classList.contains('hidden')){login?.classList.remove('hidden')}}catch(e){/* auth boot owns errors */}};
+    const syncAuth=()=>{try{const app=document.getElementById('appView'),login=document.getElementById('loginView');if(typeof currentUser!=='undefined'&&currentUser){app?.classList.remove('hidden');document.getElementById('tabs')?.classList.remove('hidden');login?.classList.add('hidden');}else if(app?.classList.contains('hidden')){login?.classList.remove('hidden')}}catch(e){}};
     setInterval(syncAuth,500);syncAuth();
+    const p6css=document.createElement('link');p6css.rel='stylesheet';p6css.href='phase6-wellbeing.css';document.head.appendChild(p6css);
+    const p6script=document.createElement('script');p6script.src='phase6-wellbeing.js';p6script.defer=true;document.body.appendChild(p6script);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installVisualLayer,{once:true});else installVisualLayer();
 })();
