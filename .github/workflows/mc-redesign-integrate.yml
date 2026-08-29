@@ -1,0 +1,44 @@
+name: Integrate Mi Centro de Control UX
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: "!contains(github.event.head_commit.message, 'Mi Centro de Control UX integrated')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrate approved UX layer
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          css = '<link rel="stylesheet" href="mc-redesign.css">'
+          js = '<script src="mc-redesign.js"></script>'
+          if css not in s:
+              s = s.replace('</head>', css + '\n</head>')
+          if js not in s:
+              s = s.replace('</body>', js + '\n</body>')
+          s = s.replace('<title>Demeter Finance</title>', '<title>Mi Centro de Control</title>')
+          s = s.replace('<meta name="theme-color" content="#0b0d0e">', '<meta name="theme-color" content="#FBF9F7">')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Structural checks
+        run: |
+          test -f mc-redesign.css
+          test -f mc-redesign.js
+          grep -q 'mc-redesign.css' index.html
+          grep -q 'mc-redesign.js' index.html
+      - name: Commit integration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Mi Centro de Control UX integrated' || exit 0
+          git push
