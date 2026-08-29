@@ -45,70 +45,77 @@
     document.head.appendChild(style);
   }
 
-  // Fase 1 shell: envuelve la aplicación funcional sin romper los nodos
-  // que necesita el código heredado (en particular #tabs).
   function boot() {
     if (document.querySelector('.mc-app')) return;
     document.documentElement.classList.add('phase1');
     document.body.classList.add('mc-page');
     installVisualBridge();
 
-    const source = document.createElement('div');
-    source.id = 'mc-source';
-    while (document.body.firstChild) source.appendChild(document.body.firstChild);
-
-    const appView = source.querySelector('#appView');
-    const loginView = source.querySelector('#loginView');
-    const errorBox = source.querySelector('#errorBox');
-    const editModal = source.querySelector('#editModal');
-    const deleteModal = source.querySelector('#deleteModal');
-    const toast = source.querySelector('#toast');
-    const oldTabs = source.querySelector('#tabs');
-
-    document.body.innerHTML = `
-      <div class="mc-app">
-        <aside class="mc-sidebar" aria-label="Navegación principal">
-          <div class="mc-brand"><span class="mc-mark">M</span><div><strong>Mi Centro</strong><small>de Control</small></div></div>
-          <div class="mc-owner"><span class="mc-avatar">M</span><div><strong id="mc-owner-name">Marco</strong><small>Cuenta privada</small></div></div>
-          <nav class="mc-nav">
-            <button class="mc-nav-item active" data-view="dashboard"><span>⌂</span><em>Inicio</em></button>
-            <button class="mc-nav-item" data-view="registrar"><span>$</span><em>Finanzas</em></button>
-            <button class="mc-nav-item" data-view="finanzas"><span>▤</span><em>Presupuestos</em></button>
-            <button class="mc-nav-item" data-view="metas"><span>◇</span><em>Metas</em></button>
-            <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>◎</span><em>Estudio</em></button>
-            <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>♡</span><em>Salud y hábitos</em></button>
-            <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>◷</span><em>Recordatorios</em></button>
-            <button class="mc-nav-item" data-view="finanzas" data-disabled-future="true"><span>◌</span><em>Reportes</em></button>
-          </nav>
-          <div class="mc-sidebar-foot"><span>MXN</span><span>America/Mexico_City</span></div>
-        </aside>
-        <main class="mc-main">
-          <header class="mc-header">
-            <div><p class="mc-eyebrow">CENTRO DE CONTROL · PERSONAL</p><h1 id="mc-page-title">Buenos días, Marco</h1><p class="mc-sub">Tu información importante, en un solo lugar.</p></div>
-            <div class="mc-header-actions"><span class="mc-date" id="mc-date"></span><button class="mc-icon-btn" id="mc-logout" type="button">Salir</button><button class="mc-avatar mc-avatar-large" type="button" aria-label="Perfil">M</button></div>
-          </header>
-          <div class="mc-scope" role="tablist" aria-label="Área de trabajo"><button id="mc-personal" class="active" type="button">Personal</button><button id="mc-studio" type="button">Estudio</button></div>
-          <section class="mc-functional" id="mc-functional"></section>
-        </main>
-        <nav class="mc-bottom" aria-label="Navegación móvil"><button class="active" data-view="dashboard"><span>⌂</span><small>Inicio</small></button><button data-view="registrar"><span>$</span><small>Finanzas</small></button><button data-view="finanzas"><span>▤</span><small>Presupuestos</small></button><button data-view="metas"><span>◇</span><small>Metas</small></button></nav>
-      </div>
-      <div class="mc-auth" id="mc-auth"></div>
+    // IMPORTANT: build the shell without replacing document.body.innerHTML.
+    // Replacing body would delete the script tags that still need to execute,
+    // especially phase7-goals.js.
+    const shell = document.createElement('div');
+    shell.className = 'mc-app';
+    shell.innerHTML = `
+      <aside class="mc-sidebar" aria-label="Navegación principal">
+        <div class="mc-brand"><span class="mc-mark">M</span><div><strong>Mi Centro</strong><small>de Control</small></div></div>
+        <div class="mc-owner"><span class="mc-avatar">M</span><div><strong id="mc-owner-name">Marco</strong><small>Cuenta privada</small></div></div>
+        <nav class="mc-nav">
+          <button class="mc-nav-item active" data-view="dashboard"><span>⌂</span><em>Inicio</em></button>
+          <button class="mc-nav-item" data-view="registrar"><span>$</span><em>Finanzas</em></button>
+          <button class="mc-nav-item" data-view="finanzas"><span>▤</span><em>Presupuestos</em></button>
+          <button class="mc-nav-item" data-view="metas"><span>◇</span><em>Metas</em></button>
+          <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>◎</span><em>Estudio</em></button>
+          <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>♡</span><em>Salud y hábitos</em></button>
+          <button class="mc-nav-item" data-view="dashboard" data-disabled-future="true"><span>◷</span><em>Recordatorios</em></button>
+          <button class="mc-nav-item" data-view="finanzas" data-disabled-future="true"><span>◌</span><em>Reportes</em></button>
+        </nav>
+        <div class="mc-sidebar-foot"><span>MXN</span><span>America/Mexico_City</span></div>
+      </aside>
+      <main class="mc-main">
+        <header class="mc-header">
+          <div><p class="mc-eyebrow">CENTRO DE CONTROL · PERSONAL</p><h1 id="mc-page-title">Buenos días, Marco</h1><p class="mc-sub">Tu información importante, en un solo lugar.</p></div>
+          <div class="mc-header-actions"><span class="mc-date" id="mc-date"></span><button class="mc-icon-btn" id="mc-logout" type="button">Salir</button><button class="mc-avatar mc-avatar-large" type="button" aria-label="Perfil">M</button></div>
+        </header>
+        <div class="mc-scope" role="tablist" aria-label="Área de trabajo"><button id="mc-personal" class="active" type="button">Personal</button><button id="mc-studio" type="button">Estudio</button></div>
+        <section class="mc-functional" id="mc-functional"></section>
+      </main>
+      <nav class="mc-bottom" aria-label="Navegación móvil"><button class="active" data-view="dashboard"><span>⌂</span><small>Inicio</small></button><button data-view="registrar"><span>$</span><small>Finanzas</small></button><button data-view="finanzas"><span>▤</span><small>Presupuestos</small></button><button data-view="metas"><span>◇</span><small>Metas</small></button></nav>
     `;
 
+    const originalMain = document.querySelector('main');
+    const appView = document.getElementById('appView');
+    const loginView = document.getElementById('loginView');
+    const errorBox = document.getElementById('errorBox');
+    const editModal = document.getElementById('editModal');
+    const deleteModal = document.getElementById('deleteModal');
+    const toast = document.getElementById('toast');
+    const oldTabs = document.getElementById('tabs');
+
+    document.body.insertBefore(shell, document.body.firstChild);
     const functional = document.getElementById('mc-functional');
+    const auth = document.createElement('div');
+    auth.className = 'mc-auth';
+    auth.id = 'mc-auth';
+    document.body.appendChild(auth);
+
     if (errorBox) functional.appendChild(errorBox);
-    if (loginView) document.getElementById('mc-auth').appendChild(loginView);
     if (appView) functional.appendChild(appView);
+    if (loginView) auth.appendChild(loginView);
     if (editModal) document.body.appendChild(editModal);
     if (deleteModal) document.body.appendChild(deleteModal);
     if (toast) document.body.appendChild(toast);
 
-    // El código financiero necesita #tabs para actualizar su estado.
-    // Se conserva en el DOM pero queda visualmente oculto.
     if (oldTabs) {
       oldTabs.classList.add('mc-legacy-tabs');
       document.body.appendChild(oldTabs);
     }
+
+    // Hide the old outer main/header only after their functional children have
+    // been moved. Script elements remain untouched and can continue executing.
+    if (originalMain) originalMain.remove();
+    const oldTop = document.querySelector('header.top');
+    if (oldTop) oldTop.remove();
 
     const date = new Intl.DateTimeFormat('es-MX', {timeZone:'America/Mexico_City',weekday:'long',day:'numeric',month:'long'}).format(new Date());
     document.getElementById('mc-date').textContent = date.charAt(0).toUpperCase() + date.slice(1);
