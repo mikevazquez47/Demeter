@@ -65,16 +65,17 @@ body.mc-page #mc-home-redesign .home-module{min-height:96px;padding:14px;border-
 .home-quick-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.quick-action{border:1px solid var(--mc-border);border-radius:14px;padding:12px 14px;background:#fff;color:var(--mc-ink);font-weight:800;text-align:left}.quick-action-dark{background:var(--mc-ink);color:#fff;border-color:var(--mc-ink)}.quick-action-pink{background:#FFF6F6}.quick-action-mint{background:#F5FAF7}
 body.mc-home-active .top{display:none!important}body.mc-home-active main{padding-top:32px!important}
 
-/* AUTH SAFETY LAYER: the private login must always remain the interactive layer. */
+/* AUTH SAFETY LAYER */
 body.mc-page #loginView{position:relative!important;z-index:100!important;pointer-events:auto!important}
 body.mc-page #loginView form,body.mc-page #loginView label,body.mc-page #loginView input,body.mc-page #loginView button{position:relative!important;z-index:101!important;pointer-events:auto!important}
 body.mc-page #loginView input{cursor:text!important;user-select:text!important;-webkit-user-select:text!important}
 body.mc-page #loginView button{cursor:pointer!important}
-body.mc-page:has(#loginView:not(.hidden)) .mc-redesign-sidebar,body.mc-page:has(#loginView:not(.hidden)) .mc-redesign-bottom{display:none!important;pointer-events:none!important}
+body.mc-page:has(#loginView:not(.hidden)) .mc-redesign-sidebar,body.mc-page:has(#loginView:not(.hidden)) .mc-redesign-bottom,body.mc-page:has(#loginView:not(.hidden)) .mc-safe-sidebar,body.mc-page:has(#loginView:not(.hidden)) .mc-safe-bottom{display:none!important;pointer-events:none!important}
 body.mc-page:has(#loginView:not(.hidden)) .top{display:none!important}
 body.mc-page:has(#loginView:not(.hidden)) main{margin-left:0!important;max-width:760px!important;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px!important}
 body.mc-page:has(#loginView:not(.hidden)) #loginView{width:min(460px,100%)!important;margin:0 auto!important}
 body.mc-page:has(#loginView:not(.hidden)) #appView{display:none!important}
+body.mc-page:has(#loginView:not(.hidden)) main > *:not(#errorBox):not(#loginView){display:none!important}
 
 @media(max-width:900px){.mc-redesign-sidebar{width:220px}body.mc-page .top,body.mc-page main{margin-left:220px}}
 @media(max-width:700px){.mc-redesign-sidebar{display:none}body.mc-page .top,body.mc-page main{margin-left:0}body.mc-page .top{padding:16px 15px 14px!important}body.mc-page #pageTitle{font-size:27px!important}body.mc-page main{padding:18px 15px 94px!important}body.mc-page #mc-home-redesign{grid-template-columns:1fr 1fr;gap:10px}body.mc-page #mc-home-redesign .home-welcome{grid-column:1/-1}body.mc-page #mc-home-redesign .home-kpi{min-height:112px;padding:14px}body.mc-page #mc-home-redesign .home-kpi .home-value{font-size:21px}body.mc-page #mc-home-redesign .home-panel-wide{grid-column:1/-1}body.mc-page #mc-home-redesign .home-modules{grid-template-columns:1fr 1fr}.home-quick-actions{grid-template-columns:1fr 1fr}.quick-action-dark{grid-column:1/-1}.mc-redesign-bottom{position:fixed;display:flex;left:0;right:0;bottom:0;height:68px;background:rgba(255,255,255,.96);backdrop-filter:blur(15px);border-top:1px solid var(--mc-border);z-index:55;padding-bottom:env(safe-area-inset-bottom)}.mc-redesign-bottom button{flex:1;border:0;background:transparent;color:#7A7F8A;font-size:9px;font-weight:750}.mc-redesign-bottom button span{display:block;font-size:18px;margin:7px 0 2px}.mc-redesign-bottom button.active{color:#B77D80}}
