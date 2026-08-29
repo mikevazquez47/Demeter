@@ -62,12 +62,13 @@
           <button data-view="metas"><span>◇</span><small>Metas</small></button>
         </nav>
       </div>
-      <div class="mc-auth" id="mc-auth"></div>
+      <div class="mc-auth" id="mc-auth" hidden></div>
     `;
 
     const functional = document.getElementById('mc-functional');
+    const auth = document.getElementById('mc-auth');
     if (errorBox) functional.appendChild(errorBox);
-    if (loginView) document.getElementById('mc-auth').appendChild(loginView);
+    if (loginView) auth.appendChild(loginView);
     if (appView) functional.appendChild(appView);
     if (editModal) document.body.appendChild(editModal);
     if (deleteModal) document.body.appendChild(deleteModal);
@@ -80,6 +81,15 @@
       timeZone: 'America/Mexico_City', weekday: 'long', day: 'numeric', month: 'long'
     }).format(new Date());
     document.getElementById('mc-date').textContent = date.charAt(0).toUpperCase() + date.slice(1);
+
+    function syncAuth() {
+      auth.hidden = !loginView || loginView.classList.contains('hidden');
+      document.querySelector('.mc-app').classList.toggle('mc-locked', !auth.hidden);
+    }
+    if (loginView) {
+      new MutationObserver(syncAuth).observe(loginView, { attributes: true, attributeFilter: ['class'] });
+      syncAuth();
+    }
 
     function activate(view, button) {
       if (button?.dataset.disabledFuture === 'true') return;
@@ -103,9 +113,11 @@
       document.getElementById('mc-personal').classList.remove('active');
     });
 
-    document.getElementById('mc-logout').addEventListener('click', () => {
-      const legacyLogout = document.getElementById('logoutButton');
-      if (legacyLogout) legacyLogout.click();
+    document.getElementById('mc-logout').addEventListener('click', async () => {
+      if (window.supabase) {
+        const client = window.supabase.createClient('https://gconmsfozomwfisnmgdq.supabase.co', 'sb_publishable_ZLXQ1aAgucleTv3g6nfOuQ_zB4T6Acd');
+        await client.auth.signOut();
+      }
     });
   }
 
