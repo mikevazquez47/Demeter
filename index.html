@@ -11,6 +11,7 @@
 @media(max-width:900px){.sidebar{display:none}.main{padding:28px 18px 90px}.grid4{grid-template-columns:repeat(2,1fr)}.access{grid-template-columns:repeat(2,1fr)}.mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:12px;right:12px;bottom:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:5px;z-index:50;box-shadow:0 8px 25px rgba(39,50,71,.09)}.mobile-nav button{border:0;background:transparent;padding:10px 4px;border-radius:10px;color:var(--muted);font-size:12px}.mobile-nav button.active{background:var(--green);color:var(--text);font-weight:700}.header h1{font-size:28px}.header{margin-bottom:22px}}
 @media(max-width:520px){#auth{padding:16px}.auth-card{padding:24px}.auth-card h1{font-size:27px}.grid4{gap:9px}.card{padding:16px}.metric-value{font-size:21px}.form-grid{grid-template-columns:1fr}.access{grid-template-columns:1fr 1fr}.quick button{flex:1}.logout{padding:9px 11px}}
 </style>
+<link rel="stylesheet" href="mc-redesign.css">
 </head>
 <body>
 <section id="auth" class="shell"><form id="loginForm" class="auth-card" autocomplete="on"><div class="brand">Mi Centro de Control</div><h1>Bienvenido</h1><p class="intro">Inicia sesión para entrar a tu centro de control.</p><label class="field"><span>Correo</span><input id="loginEmail" name="email" type="email" autocomplete="username" inputmode="email" required></label><label class="field"><span>Contraseña</span><input id="loginPassword" name="password" type="password" autocomplete="current-password" required></label><button id="loginButton" class="primary" type="submit">Entrar</button><div id="authError" class="auth-error" role="alert"></div></form></section>
@@ -45,4 +46,5 @@ client.auth.onAuthStateChange((event,session)=>{if(session){user=session.user;sh
 (async()=>{ $('greeting').textContent=greeting();document.querySelector('.header h1').textContent=greeting();try{const {data}=await client.auth.getSession();if(data.session){user=data.session.user;showApp();await loadFinance()}else showAuth()}catch(e){showAuth()}})();
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 </script>
+<script src="mc-redesign.js"></script>
 </body></html>
