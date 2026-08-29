@@ -80,3 +80,13 @@ body.mc-page:has(#loginView:not(.hidden)) main > *:not(#errorBox):not(#loginView
 @media(max-width:900px){.mc-redesign-sidebar{width:220px}body.mc-page .top,body.mc-page main{margin-left:220px}}
 @media(max-width:700px){.mc-redesign-sidebar{display:none}body.mc-page .top,body.mc-page main{margin-left:0}body.mc-page .top{padding:16px 15px 14px!important}body.mc-page #pageTitle{font-size:27px!important}body.mc-page main{padding:18px 15px 94px!important}body.mc-page #mc-home-redesign{grid-template-columns:1fr 1fr;gap:10px}body.mc-page #mc-home-redesign .home-welcome{grid-column:1/-1}body.mc-page #mc-home-redesign .home-kpi{min-height:112px;padding:14px}body.mc-page #mc-home-redesign .home-kpi .home-value{font-size:21px}body.mc-page #mc-home-redesign .home-panel-wide{grid-column:1/-1}body.mc-page #mc-home-redesign .home-modules{grid-template-columns:1fr 1fr}.home-quick-actions{grid-template-columns:1fr 1fr}.quick-action-dark{grid-column:1/-1}.mc-redesign-bottom{position:fixed;display:flex;left:0;right:0;bottom:0;height:68px;background:rgba(255,255,255,.96);backdrop-filter:blur(15px);border-top:1px solid var(--mc-border);z-index:55;padding-bottom:env(safe-area-inset-bottom)}.mc-redesign-bottom button{flex:1;border:0;background:transparent;color:#7A7F8A;font-size:9px;font-weight:750}.mc-redesign-bottom button span{display:block;font-size:18px;margin:7px 0 2px}.mc-redesign-bottom button.active{color:var(--mc-pink-strong)}}
 @media(max-width:390px){body.mc-page #mc-home-redesign{grid-template-columns:1fr}.mc-page #mc-home-redesign .home-modules{grid-template-columns:1fr 1fr}}
+
+/* FINAL COLOR LOCK
+   The base app uses .metric.green/.pink/.blue/.peach.
+   The previous redesign layer only styled .metric-g/.metric-p/.metric-b/.metric-o,
+   while body.mc-page .card uses !important white. That caused the colors to appear
+   briefly and disappear once mc-redesign.css finished loading. */
+body.mc-page .metric.green{background:linear-gradient(145deg,#FFFFFF,var(--mc-mint))!important;border-left:5px solid var(--mc-mint-strong)!important}
+body.mc-page .metric.pink{background:linear-gradient(145deg,#FFFFFF,var(--mc-pink))!important;border-left:5px solid var(--mc-pink-strong)!important}
+body.mc-page .metric.blue{background:linear-gradient(145deg,#FFFFFF,var(--mc-sky))!important;border-left:5px solid var(--mc-sky-strong)!important}
+body.mc-page .metric.peach{background:linear-gradient(145deg,#FFFFFF,var(--mc-peach))!important;border-left:5px solid var(--mc-peach-strong)!important}
